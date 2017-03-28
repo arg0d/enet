@@ -88,9 +88,47 @@ typedef enum _ENetSocketShutdown
  */
 typedef struct _ENetAddress
 {
-   enet_uint32 host;
+   // enet_uint32 host;
+   union {
+      struct {
+         enet_uint32 host;
+      } v4;
+      union {
+         enet_uint128 host;
+         enet_uint8 hostBytes[16]; // This is for easier access if needed by platform APIs
+      } v6;
+   } ip;
+   enet_uint16 family;
    enet_uint16 port;
 } ENetAddress;
+
+static inline int
+ENET_ADDRESS_HOST_COMPARE(ENetAddress * a1, ENetAddress * a2)
+{
+   if (a1 -> family != a2 -> family) {
+      return 0;
+   }
+   switch (a1 -> family) {
+      case AF_INET: return a1->ip.v4.host == a2->ip.v4.host;
+      case AF_INET6: return a1->ip.v6.host == a2->ip.v6.host;
+   }
+   return 0;
+}
+
+static inline int
+ENET_ADDRESS_IS_BROADCAST(ENetAddress * address)
+{
+   return address->family == AF_INET &&
+      address->ip.v4.host == ENET_HOST_BROADCAST;
+}
+
+static inline void
+ENET_ADDRESS_COPY(ENetAddress * dst, ENetAddress * src)
+{
+   dst -> ip = src -> ip;
+   dst -> family = src -> family;
+   dst -> port = src -> port;
+}
 
 /**
  * Packet flag bit constants.
@@ -138,11 +176,7 @@ typedef void (ENET_CALLBACK * ENetPacketFreeCallback) (struct _ENetPacket *);
  *    (not supported for reliable packets)
  *
  *    ENET_PACKET_FLAG_NO_ALLOCATE - packet will not allocate data, and user must supply it instead
- *
- *    ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT - packet will be fragmented using unreliable
- *    (instead of reliable) sends if it exceeds the MTU
- *
- *    ENET_PACKET_FLAG_SENT - whether the packet has been sent from all queues it has been entered into
+ 
    @sa ENetPacketFlag
  */
 typedef struct _ENetPacket
@@ -409,7 +443,7 @@ typedef enum _ENetEventType
    ENET_EVENT_TYPE_CONNECT    = 1,  
 
    /** a peer has disconnected.  This event is generated on a successful 
-     * completion of a disconnect initiated by enet_peer_disconnect, if 
+     * completion of a disconnect initiated by enet_pper_disconnect, if 
      * a peer has timed out, or if a connection request intialized by 
      * enet_host_connect has timed out.  The peer field contains the peer 
      * which disconnected. The data field contains user supplied data 
