@@ -223,7 +223,7 @@ enet_socket_get_address (ENetSocket socket, ENetAddress * address)
             struct sockaddr_in * sinv4 = (struct sockaddr_in *) &sin;
             address -> ip.v4.host = (enet_uint32) sinv4->sin_addr.s_addr;
             address -> port = ENET_NET_TO_HOST_16 (sinv4->sin_port);
-			address -> family = AF_INET;
+            address -> family = AF_INET;
         } break;
 
         case AF_INET6:

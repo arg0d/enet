@@ -176,7 +176,11 @@ typedef void (ENET_CALLBACK * ENetPacketFreeCallback) (struct _ENetPacket *);
  *    (not supported for reliable packets)
  *
  *    ENET_PACKET_FLAG_NO_ALLOCATE - packet will not allocate data, and user must supply it instead
- 
+ *
+ *    ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT - packet will be fragmented using unreliable
+ *    (instead of reliable) sends if it exceeds the MTU
+ *
+ *    ENET_PACKET_FLAG_SENT - whether the packet has been sent from all queues it has been entered into
    @sa ENetPacketFlag
  */
 typedef struct _ENetPacket
@@ -443,7 +447,7 @@ typedef enum _ENetEventType
    ENET_EVENT_TYPE_CONNECT    = 1,  
 
    /** a peer has disconnected.  This event is generated on a successful 
-     * completion of a disconnect initiated by enet_pper_disconnect, if 
+     * completion of a disconnect initiated by enet_peer_disconnect, if 
      * a peer has timed out, or if a connection request intialized by 
      * enet_host_connect has timed out.  The peer field contains the peer 
      * which disconnected. The data field contains user supplied data 
