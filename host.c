@@ -89,7 +89,7 @@ enet_host_create (const ENetAddress * address, size_t peerCount, size_t channelL
     host -> checksum = NULL;
 
     host -> receivedAddress.ip.v4.host = ENET_HOST_ANY;
-	host -> receivedAddress.family = AF_INET;
+    host -> receivedAddress.family = AF_INET;
 
     host -> receivedAddress.port = 0;
     host -> receivedData = NULL;

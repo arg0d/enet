@@ -136,7 +136,7 @@ enet_address_get_host (const ENetAddress * address, char * name, size_t nameLeng
         case AF_INET6:
         {
             struct in6_addr in;
-			memcpy(in.s6_addr, address -> ip.v6.hostBytes, sizeof(enet_uint128));
+            memcpy(in.s6_addr, address -> ip.v6.hostBytes, sizeof(enet_uint128));
             hostEntry = gethostbyaddr ((char *) & in, sizeof (struct in6_addr), AF_INET6);
         } break;
 
@@ -190,7 +190,7 @@ enet_socket_bind (ENetSocket socket, const ENetAddress * address)
             if (address != NULL)
             {
                sin.sin6_port = ENET_HOST_TO_NET_16 (address -> port);
-			   memcpy(sin.sin6_addr.s6_addr, address -> ip.v6.hostBytes, sizeof(enet_uint128));
+               memcpy(sin.sin6_addr.s6_addr, address -> ip.v6.hostBytes, sizeof(enet_uint128));
             }
             else
             {
@@ -220,22 +220,20 @@ enet_socket_get_address (ENetSocket socket, ENetAddress * address)
 	switch (sin.ss_family) {
         case AF_INET:
         {
-			struct sockaddr_in * sinv4 = (struct sockaddr_in *) &sin;
+            struct sockaddr_in * sinv4 = (struct sockaddr_in *) &sin;
             address -> ip.v4.host = (enet_uint32) sinv4->sin_addr.s_addr;
             address -> port = ENET_NET_TO_HOST_16 (sinv4->sin_port);
 			address -> family = AF_INET;
         } break;
 
-		case AF_INET6:
-		{
-			struct sockaddr_in6 * sinv6 = (struct sockaddr_in6 *) &sin;
-			memcpy(address -> ip.v6.hostBytes, sinv6 -> sin6_addr.s6_addr, sizeof(enet_uint128));
-			address -> port = ENET_NET_TO_HOST_16(sinv6 -> sin6_port);
-			address -> family = AF_INET6;
-		} break;
-
+        case AF_INET6:
+        {
+            struct sockaddr_in6 * sinv6 = (struct sockaddr_in6 *) &sin;
+            memcpy(address -> ip.v6.hostBytes, sinv6 -> sin6_addr.s6_addr, sizeof(enet_uint128));
+            address -> port = ENET_NET_TO_HOST_16(sinv6 -> sin6_port);
+            address -> family = AF_INET6;
+        } break;
 	}
-
 
     return 0;
 }
